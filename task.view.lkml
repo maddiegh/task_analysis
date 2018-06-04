@@ -142,14 +142,14 @@ view: task {
   measure: interval_start {
     description: "First day in the interval selected"
     type: date
-    #hidden: yes
+    hidden: yes
     sql: min(${task_detail_date});;
   }
 
   measure: interval_end {
     description: "Last day in the interval selected"
     type: date
-    #hidden: yes
+    hidden: yes
     sql: max(${task_detail_date});;
     #sql: concat(datename(day,max(${task_detail_date})),' ',datename(m,max(${task_detail_date})),' ',datename(year,min(${task_detail_date})))  ;;
   }
