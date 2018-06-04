@@ -13,6 +13,17 @@ datagroup: task_analysis_default_datagroup {
 
 persist_with: task_analysis_default_datagroup
 
-explore: oldbury_weather_reading {}
 
-explore: task {}
+explore: task {
+  always_filter: {
+    filters: {
+      field: task_detail_date
+      value: "2018/05"
+    }
+  }
+  join: oldbury_weather_reading {
+    type: left_outer
+    sql_on: ${task.task_detail_date} = ${oldbury_weather_reading.recorded_date} ;;
+    relationship: many_to_one
+  }
+}

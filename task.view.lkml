@@ -1,4 +1,5 @@
 view: task {
+  view_label: "(1) Tasks"
   sql_table_name: aa_contract_to_cash.task ;;
 
   dimension: arrive_to_rss_complete {
@@ -7,11 +8,14 @@ view: task {
   }
 
   dimension: bkdn_seq_no_today {
+    hidden: yes
     type: number
     sql: ${TABLE}."Bkdn Seq No Today" ;;
   }
 
   dimension: bkdn_task_no {
+    label: "Breakdown Task Number"
+    primary_key: yes
     type: number
     sql: ${TABLE}."Bkdn Task No" ;;
   }
@@ -121,7 +125,7 @@ view: task {
     sql: ${TABLE}."Task Detail Date" ;;
   }
 
-  dimension_group: task_detail {
+  dimension_group: create {
     type: time
     timeframes: [
       raw,
@@ -133,6 +137,21 @@ view: task {
       year
     ]
     sql: ${TABLE}."Task Detail Time" ;;
+  }
+
+  measure: interval_start {
+    description: "First day in the interval selected"
+    type: date
+    #hidden: yes
+    sql: min(${task_detail_date});;
+  }
+
+  measure: interval_end {
+    description: "Last day in the interval selected"
+    type: date
+    #hidden: yes
+    sql: max(${task_detail_date});;
+    #sql: concat(datename(day,max(${task_detail_date})),' ',datename(m,max(${task_detail_date})),' ',datename(year,min(${task_detail_date})))  ;;
   }
 
   dimension: task_vehicle_make {
@@ -148,5 +167,10 @@ view: task {
   measure: count {
     type: count
     drill_fields: [patrol_name, customer_group_name]
+  }
+
+  measure: count_distinct_days {
+    type: count_distinct
+    sql: ${TABLE}."Task Detail Date" ;;
   }
 }
