@@ -33,16 +33,20 @@ view: task {
   dimension: customer_group_name {
     type: string
     sql: ${TABLE}."Customer Group Name" ;;
+    link: {
+      label: "Details about this Customer Group"
+      url: "https://redkitetaa.eu.looker.com/dashboards/4?Date%20Range={{ _filters['task.task_detail_date'] | url_encode }}&Customer%20Group%20Name={{ value | url_encode }}"
+    }
   }
 
   dimension: fault_description {
     type: string
-    sql: ${TABLE}."Fault Description" ;;
+    sql: case when ${TABLE}."Fault Description" = ' ' then 'Unknown' else ${TABLE}."Fault Description" end;;
   }
 
   dimension: initial_diagnosed_fault_description {
     type: string
-    sql: ${TABLE}."Initial Diagnosed Fault Description" ;;
+    sql:  case when ${TABLE}."Initial Diagnosed Fault Description" = ' ' then 'Unknown' else ${TABLE}."Initial Diagnosed Fault Description" end ;;
   }
 
   dimension: patrol_name {
