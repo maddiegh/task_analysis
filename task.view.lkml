@@ -1,6 +1,30 @@
 view: task {
   view_label: "(1) Tasks"
-  sql_table_name: aa_contract_to_cash.task ;;
+  derived_table: {
+    sql:
+    select
+        t1.*,
+        case when t2.vol < 1000 then 'Other' else t1."Fault Description" end as fault_description_group,
+        case when t3.vol < 1000 then 'Other' else t1."Initial Diagnosed Fault Description" end as initial_diagnosed_fauld_description_group,
+        case when t4.vol < 500 then 'Other' else t1."Customer Group Name" end as customer_group_high_level
+    from aa_contract_to_cash.task t1
+    left join
+        (
+        select "Fault Description", count(*) as vol from aa_contract_to_cash.task group by task."Fault Description"
+        ) t2
+      on t1."Fault Description" = t2."Fault Description"
+    left join
+        (
+        select "Initial Diagnosed Fault Description", count(*) as vol from aa_contract_to_cash.task group by task."Initial Diagnosed Fault Description"
+        ) t3
+      on t1."Initial Diagnosed Fault Description" = t3."Initial Diagnosed Fault Description"
+    left join
+        (
+        select "Customer Group Name", count(*) as vol from aa_contract_to_cash.task group by task."Customer Group Name"
+        ) t4
+      on t1."Customer Group Name" = t4."Customer Group Name"
+    ;;
+  }
 
   dimension: arrive_to_rss_complete {
     type: number
@@ -39,6 +63,11 @@ view: task {
     }
   }
 
+  dimension: initial_diagnosed_fault_description_group {
+    type: string
+    sql: case when ${TABLE}.initial_diagnosed_fault_description_group = ' ' then 'Unknown' else ${TABLE}.initial_diagnosed_fault_description_group end;;
+  }
+
   filter: customer_group_name_filter {
     type: string
     suggest_dimension: customer_group_name
@@ -51,9 +80,19 @@ view: task {
     sql: case when ${TABLE}."Fault Description" = ' ' then 'Unknown' else ${TABLE}."Fault Description" end;;
   }
 
+  dimension: fault_description_group {
+    type: string
+    sql: case when ${TABLE}.fault_description_group = ' ' then 'Unknown' else ${TABLE}.fault_description_group end;;
+  }
+
   dimension: initial_diagnosed_fault_description {
     type: string
     sql:  case when ${TABLE}."Initial Diagnosed Fault Description" = ' ' then 'Unknown' else ${TABLE}."Initial Diagnosed Fault Description" end ;;
+  }
+
+  dimension: customer_group_high_level {
+    type: string
+    sql: case when ${TABLE}.customer_group_high_level = ' ' then 'Unknown' else ${TABLE}.customer_group_high_level end;;
   }
 
   dimension: patrol_name {
