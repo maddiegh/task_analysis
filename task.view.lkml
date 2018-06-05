@@ -39,6 +39,13 @@ view: task {
     }
   }
 
+  filter: customer_group_name_filter {
+    type: string
+    suggest_dimension: customer_group_name
+    full_suggestions: yes
+    suggestable: yes
+  }
+
   dimension: fault_description {
     type: string
     sql: case when ${TABLE}."Fault Description" = ' ' then 'Unknown' else ${TABLE}."Fault Description" end;;
@@ -171,6 +178,11 @@ view: task {
   measure: count {
     type: count
     drill_fields: [patrol_name, customer_group_name]
+  }
+
+  measure: count_customer_group_name_filter {
+    type: sum
+    sql: case when ${customer_group_name} = {% parameter customer_group_name_filter %} then 1 else 0  end;;
   }
 
   measure: count_distinct_days {
