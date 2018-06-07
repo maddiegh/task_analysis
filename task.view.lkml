@@ -61,6 +61,11 @@ view: task {
       label: "Details about this Customer Group"
       url: "https://redkitetaa.eu.looker.com/dashboards/4?Date%20Range={{ _filters['task.task_detail_date'] | url_encode }}&Customer%20Group%20Name={{ value | url_encode }}"
     }
+
+    link: {
+      label: "Filter on Customer Group"
+      url: "https://redkitetaa.eu.looker.com/dashboards/3?Customer%20Group%20Name={{ value | url_encode }}"
+    }
   }
 
   dimension: initial_diagnosed_fault_description_group {
